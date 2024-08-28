@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prueba.tecnica.mapper.CoordinadorMapper">
+    <resultMap id="CoordinadorHelpdeskResultMap" type="com.prueba.tecnica.model.CoordinadorHelpdesk">
+        <id property="idCoordinador" column="id_coordinador"/>
+        <result property="nombre" column="nombre"/>       
+    </resultMap>
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="CoordinadorHelpdeskResultMap">
+              SELECT id_coordinador, nombre
+               FROM coordinador_helpdesk WHERE nombre COLLATE UTF8_GENERAL_CI like #{nombre}
+    </select>
+
+</mapper>

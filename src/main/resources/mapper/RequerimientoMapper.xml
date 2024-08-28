@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prueba.tecnica.mapper.RequerimientoMapper">
+    <resultMap id="RequerimientoResultMap" type="com.prueba.tecnica.model.Requerimiento">
+        <id property="idRequerimiento" column="id_requerimiento"/>
+        <result property="nombreSolicitud" column="nombre_solicitud"/>
+        <result property="descripcionSolicitud" column="descripcion_solicitud"/>
+        <result property="anexo" column="anexo"/>
+        <result property="fechaSolicitud" column="fecha_solicitud"/>
+        <association property="solicitante" javaType="com.prueba.tecnica.model.Solicitante">
+            <id property="idSolicitante" column="id_solicitante"/>
+            <result property="nombres" column="solicitante_nombres"/>
+            <result property="apellidos" column="solicitante_apellidos"/>
+            <result property="area" column="solicitante_area"/>
+        </association>
+        <association property="coordinador" javaType="com.prueba.tecnica.model.CoordinadorHelpdesk">
+            <id property="idCoordinador" column="id_coordinador"/>
+            <result property="nombre" column="coordinador_nombre"/>
+        </association>
+        <association property="analista" javaType="com.prueba.tecnica.model.AnalistaTI">
+            <id property="idAnalista" column="id_analista"/>
+            <result property="nombre" column="analista_nombre"/>
+            <result property="sistemaEspecialidad" column="analista_sistema_especialidad"/>
+        </association>        
+    </resultMap>
+
+    <select id="findAll" resultMap="RequerimientoResultMap">
+                SELECT r.*, 
+               s.nombres as solicitante_nombres, s.apellidos as solicitante_apellidos, s.area as solicitante_area,
+               c.nombre as coordinador_nombre,
+               a.nombre as analista_nombre, a.sistema_especialidad as analista_sistema_especialidad
+		        FROM REQUERIMIENTO r
+		        LEFT JOIN SOLICITANTE s ON r.id_solicitante = s.id_solicitante
+		        LEFT JOIN COORDINADOR_HELPDESK c ON r.id_coordinador = c.id_coordinador
+		        LEFT JOIN ANALISTA_TI a ON r.id_analista = a.id_analista
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="RequerimientoResultMap">
+               SELECT r.*, 
+               s.nombres as solicitante_nombres, s.apellidos as solicitante_apellidos, s.area as solicitante_area,
+               c.nombre as coordinador_nombre,
+               a.nombre as analista_nombre, a.sistema_especialidad as analista_sistema_especialidad
+		       FROM REQUERIMIENTO r
+		       LEFT JOIN SOLICITANTE s ON r.id_solicitante = s.id_solicitante
+		       LEFT JOIN COORDINADOR_HELPDESK c ON r.id_coordinador = c.id_coordinador
+		       LEFT JOIN ANALISTA_TI a ON r.id_analista = a.id_analista
+		       WHERE r.id_requerimiento = #{id}
+    </select>
+    
+   <select id="findByName" parameterType="java.lang.String" resultMap="RequerimientoResultMap">
+               SELECT r.*, 
+               s.nombres as solicitante_nombres, s.apellidos as solicitante_apellidos, s.area as solicitante_area,
+               c.nombre as coordinador_nombre,
+               a.nombre as analista_nombre, a.sistema_especialidad as analista_sistema_especialidad
+		       FROM REQUERIMIENTO r
+		       LEFT JOIN SOLICITANTE s ON r.id_solicitante = s.id_solicitante
+		       LEFT JOIN COORDINADOR_HELPDESK c ON r.id_coordinador = c.id_coordinador
+		       LEFT JOIN ANALISTA_TI a ON r.id_analista = a.id_analista
+		       WHERE r.nombre_solicitud COLLATE UTF8_GENERAL_CI like #{nombre}
+    </select>
+
+    <insert id="insert" parameterType="com.prueba.tecnica.model.Requerimiento">
+		INSERT INTO REQUERIMIENTO (nombre_solicitud, descripcion_solicitud, anexo, fecha_solicitud, id_solicitante, id_coordinador, id_analista)
+        VALUES (#{nombreSolicitud}, #{descripcionSolicitud}, #{anexo}, #{fechaSolicitud}, 
+                #{solicitante.idSolicitante}, #{coordinador.idCoordinador}, #{analista.idAnalista})
+      <selectKey keyProperty = "idRequerimiento" resultType = "long" order = "AFTER">
+         select last_insert_id() as idRequerimiento
+      </selectKey> 
+        
+    </insert>
+
+    <update id="update" parameterType="com.prueba.tecnica.model.Requerimiento">
+		UPDATE REQUERIMIENTO
+        SET nombre_solicitud = #{nombreSolicitud},
+            descripcion_solicitud = #{descripcionSolicitud},
+            anexo = #{anexo},
+            fecha_solicitud = #{fechaSolicitud},
+            id_solicitante = #{solicitante.idSolicitante},
+            id_coordinador = #{coordinador.idCoordinador},
+            id_analista = #{analista.idAnalista}
+        WHERE id_requerimiento = #{idRequerimiento}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM requerimiento WHERE id_requerimiento = #{id};
+    </delete>
+</mapper>

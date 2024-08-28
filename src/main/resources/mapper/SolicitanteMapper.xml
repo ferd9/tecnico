@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prueba.tecnica.mapper.SolicitanteMapper">
+    <resultMap id="SolicitanteResultMap" type="com.prueba.tecnica.model.Solicitante">
+        <id property="idSolicitante" column="id_solicitante"/>
+        <result property="nombres" column="nombres"/>
+        <result property="apellidos" column="apellidos"/>
+        <result property="area" column="area"/>         
+    </resultMap>
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="SolicitanteResultMap">
+              SELECT id_solicitante, nombres, apellidos, area
+               FROM solicitante WHERE nombres COLLATE UTF8_GENERAL_CI like #{nombre}
+    </select>
+
+</mapper>
